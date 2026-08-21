@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>学术晋升 Agent 工作流卡片与流程图</title>
+  <style>
+    :root {
+      --ink: #17202a;
+      --muted: #667085;
+      --line: #d9e2ec;
+      --paper: #fbfcfd;
+      --panel: #ffffff;
+      --blue: #2563eb;
+      --teal: #0f766e;
+      --amber: #b45309;
+      --rose: #be123c;
+      --green: #15803d;
+      --violet: #6d28d9;
+      --soft-blue: #eaf2ff;
+      --soft-teal: #e6f5f3;
+      --soft-amber: #fff4df;
+      --soft-rose: #ffe8ee;
+      --soft-green: #e9f7ed;
+      --shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #eef3f8;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      line-height: 1.45;
+    }
+
+    .deck {
+      width: min(1440px, 100%);
+      margin: 0 auto;
+      padding: 28px;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .mark {
+      width: 52px;
+      height: 52px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--blue), var(--teal));
+      box-shadow: var(--shadow);
+    }
+
+    h1, h2, h3, p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 30px;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 15px;
+      margin-top: 4px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      padding: 6px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: 8px;
+    }
+
+    .tab {
+      appearance: none;
+      border: 0;
+      border-radius: 6px;
+      padding: 10px 14px;
+      color: var(--muted);
+      background: transparent;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    .tab.active {
+      color: white;
+      background: var(--ink);
+    }
+
+    .screen {
+      min-height: calc(100vh - 112px);
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 22px;
+    }
+
+    .hero-panel {
+      min-height: 250px;
+      background: linear-gradient(135deg, #ffffff 0%, #f2f7ff 54%, #edf8f5 100%);
+      display: grid;
+      align-content: space-between;
+      gap: 24px;
+    }
+
+    .eyebrow {
+      color: var(--blue);
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .big-title {
+      font-size: 44px;
+      line-height: 1.12;
+      letter-spacing: 0;
+      max-width: 820px;
+    }
+
+    .summary {
+      margin-top: 16px;
+      color: #344054;
+      font-size: 19px;
+      max-width: 880px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 10px;
+      background: #fff;
+      color: #344054;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .section-title {
+      font-size: 18px;
+      margin-bottom: 14px;
+    }
+
+    .list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .item {
+      display: grid;
+      grid-template-columns: 9px 1fr;
+      gap: 10px;
+      color: #344054;
+      font-size: 15px;
+      align-items: start;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      margin-top: 7px;
+      background: var(--blue);
+    }
+
+    .dot.teal { background: var(--teal); }
+    .dot.amber { background: var(--amber); }
+    .dot.rose { background: var(--rose); }
+    .dot.green { background: var(--green); }
+    .dot.violet { background: var(--violet); }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .mini {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      background: #fff;
+      min-height: 145px;
+    }
+
+    .mini h3 {
+      font-size: 16px;
+      margin-bottom: 9px;
+    }
+
+    .mini p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .band {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .perm {
+      border-radius: 8px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      background: #fff;
+      min-height: 108px;
+    }
+
+    .perm strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+
+    .perm span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .flow-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .lane {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      min-height: 620px;
+    }
+
+    .lane h2 {
+      font-size: 18px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .badge {
+      font-size: 12px;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-weight: 500;
+    }
+
+    .node {
+      position: relative;
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      padding: 14px;
+      background: var(--soft-blue);
+      margin-bottom: 28px;
+      min-height: 88px;
+    }
+
+    .node::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -22px;
+      width: 2px;
+      height: 16px;
+      background: #b6c2cf;
+    }
+
+    .node:last-child::after {
+      display: none;
+    }
+
+    .node h3 {
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+
+    .node p {
+      font-size: 13px;
+      color: #475467;
+    }
+
+    .node.teal {
+      border-left-color: var(--teal);
+      background: var(--soft-teal);
+    }
+
+    .node.amber {
+      border-left-color: var(--amber);
+      background: var(--soft-amber);
+    }
+
+    .node.rose {
+      border-left-color: var(--rose);
+      background: var(--soft-rose);
+    }
+
+    .node.green {
+      border-left-color: var(--green);
+      background: var(--soft-green);
+    }
+
+    .review-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .reviewer {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      background: #fff;
+      min-height: 94px;
+    }
+
+    .reviewer strong {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 5px;
+    }
+
+    .reviewer span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      .toolbar {
+        display: none;
+      }
+
+      .deck {
+        padding: 0;
+      }
+
+      .screen {
+        display: block;
+        min-height: auto;
+        border: 0;
+        box-shadow: none;
+        page-break-after: always;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck">
+    <header class="toolbar">
+      <div class="brand">
+        <div class="mark">学术</div>
+        <div>
+          <h1>学术晋升 Agent 作业截图页</h1>
+          <p class="subtitle">用于课程作业：Agent 工作流卡片截图 / Agent 流程图截图</p>
+        </div>
+      </div>
+      <nav class="tabs" aria-label="视图切换">
+        <button class="tab active" data-target="card">工作流卡片</button>
+        <button class="tab" data-target="flow">流程图</button>
+      </nav>
+    </header>
+
+    <section class="screen active" id="card">
+      <div class="card-grid">
+        <article class="panel hero-panel">
+          <div>
+            <p class="eyebrow">Agent Workflow Card</p>
+            <h2 class="big-title">学术晋升 Agent</h2>
+            <p class="summary">面向数字媒体艺术教师的长期学术晋升助手，统筹职称要求、论文写作、课题申报、期刊匹配、竞赛项目、文献精读与科研知识沉淀。</p>
+          </div>
+          <div class="chips">
+            <span class="chip">职称差距分析</span>
+            <span class="chip">论文选题与框架</span>
+            <span class="chip">四席评审</span>
+            <span class="chip">期刊匹配</span>
+            <span class="chip">课题申报</span>
+            <span class="chip">知识库归档</span>
+          </div>
+        </article>
+
+        <aside class="panel">
+          <h2 class="section-title">触发条件</h2>
+          <div class="list">
+            <div class="item"><span class="dot"></span><span>收到职称、课题、期刊、竞赛或项目通知。</span></div>
+            <div class="item"><span class="dot teal"></span><span>收到论文题目、摘要、提纲、初稿或修改稿。</span></div>
+            <div class="item"><span class="dot amber"></span><span>收到文献、PDF、网页、数据库检索结果或书籍资料。</span></div>
+            <div class="item"><span class="dot rose"></span><span>需要判断研究方向、发表价值、申报风险或材料缺口。</span></div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="mini-grid">
+        <section class="mini">
+          <h3>输入</h3>
+          <p>职称评审文件、学校通知、课题申报通知、论文材料、数据库结果、研究想法、已发表成果和项目材料。</p>
+        </section>
+        <section class="mini">
+          <h3>核心步骤</h3>
+          <p>识别资料类型，提取要求与时间，判断晋升关系，匹配知识库与工具，生成任务路径，关键节点启动评审。</p>
+        </section>
+        <section class="mini">
+          <h3>输出</h3>
+          <p>职称差距分析、科研任务清单、文献精读卡、论文选题建议、期刊匹配建议、申报材料框架和推进报告。</p>
+        </section>
+        <section class="mini">
+          <h3>质量标准</h3>
+          <p>事实可追溯、资料有路径、评分有依据、结论分层清楚、风险先暴露、建议可执行。</p>
+        </section>
+        <section class="mini">
+          <h3>沉淀位置</h3>
+          <p>重要资料进入学术晋升知识库；论文、课题、期刊、竞赛和输出成果分别进入对应业务目录。</p>
+        </section>
+        <section class="mini">
+          <h3>协作机制</h3>
+          <p>关键成果通过总部任务总账交接；飞书消息只作通知，真实产物路径才作为完成证据。</p>
+        </section>
+      </div>
+
+      <div class="band">
+        <div class="perm"><strong>L1 自动执行</strong><span>检索、总结、分类、生成草稿。</span></div>
+        <div class="perm"><strong>L2 执行后汇报</strong><span>研究报告、知识库整理、资料目录创建。</span></div>
+        <div class="perm"><strong>L3 先确认</strong><span>敏感资料处理、正式申报材料修改、外部系统提交前操作。</span></div>
+        <div class="perm"><strong>L4 人工决策</strong><span>正式提交申报、对外承诺、敏感材料上传云端。</span></div>
+      </div>
+
+      <p class="footer-note">
+        <span>截图建议：本页作为“Agent 工作流卡片截图”。</span>
+        <span>来源：学术晋升 Agent 卡片、系统提示词、论文写作评审联动系统。</span>
+      </p>
+    </section>
+
+    <section class="screen" id="flow">
+      <div class="flow-wrap">
+        <section class="lane">
+          <h2>任务进入 <span class="badge">输入识别</span></h2>
+          <div class="node">
+            <h3>1. 接收任务或资料</h3>
+            <p>来自诗芸、飞书工作间、Codex 对话或已有项目目录。</p>
+          </div>
+          <div class="node teal">
+            <h3>2. 判断资料类型</h3>
+            <p>职称文件、课题通知、论文稿件、文献资料、研究想法、成果清单。</p>
+          </div>
+          <div class="node amber">
+            <h3>3. 识别权限等级</h3>
+            <p>L1/L2 可推进；L3 先提交方案；L4 保留人工决策。</p>
+          </div>
+          <div class="node green">
+            <h3>4. 查询已有能力</h3>
+            <p>优先复用总部 Skill、工具、流程和学术知识库。</p>
+          </div>
+          <div class="node rose">
+            <h3>5. 建立任务上下文</h3>
+            <p>匹配已有事件编号或生成持续任务记录，避免重复建设。</p>
+          </div>
+        </section>
+
+        <section class="lane">
+          <h2>学术处理 <span class="badge">分析执行</span></h2>
+          <div class="node teal">
+            <h3>6. 提取要求与证据</h3>
+            <p>时间、级别、数量、材料清单、期刊风格、研究对象和证据边界。</p>
+          </div>
+          <div class="node">
+            <h3>7. 生成研究路径</h3>
+            <p>关键词、资料来源、论文结构、课题框架、投稿或申报策略。</p>
+          </div>
+          <div class="node amber">
+            <h3>8. 进入关键评审节点</h3>
+            <p>选题、框架、初稿、修改稿四个阶段触发多评审闭环。</p>
+          </div>
+          <div class="review-grid">
+            <div class="reviewer"><strong>创新边界</strong><span>研究空白、题目收紧、最终裁决</span></div>
+            <div class="reviewer"><strong>逻辑审查</strong><span>论证链、方法、反方质询</span></div>
+            <div class="reviewer"><strong>全文精读</strong><span>长材料、案例、专著概览</span></div>
+            <div class="reviewer"><strong>字段整理</strong><span>题录、格式、去重、初筛</span></div>
+          </div>
+          <div class="node green" style="margin-top: 28px;">
+            <h3>9. 形成可执行结论</h3>
+            <p>保留分歧，标注证据，给出推进、修改、重写或暂停建议。</p>
+          </div>
+        </section>
+
+        <section class="lane">
+          <h2>交付归档 <span class="badge">闭环沉淀</span></h2>
+          <div class="node">
+            <h3>10. 生成产物</h3>
+            <p>差距分析、文献综述、选题报告、四席评审表、申报框架。</p>
+          </div>
+          <div class="node teal">
+            <h3>11. 写入业务目录</h3>
+            <p>知识库、论文写作、课题申报、期刊匹配、输出成果等目录。</p>
+          </div>
+          <div class="node amber">
+            <h3>12. 回写总部总账</h3>
+            <p>记录状态、摘要、真实产物路径、下一步和待诗芸确认项。</p>
+          </div>
+          <div class="node green">
+            <h3>13. Skill 沉淀判断</h3>
+            <p>先记录经验；稳定复用后进入候选池；成熟后再建议创建 Skill。</p>
+          </div>
+          <div class="node rose">
+            <h3>14. 向诗芸汇报</h3>
+            <p>说明完成项、关键判断、风险、路径和下一步，不把通知当完成证据。</p>
+          </div>
+        </section>
+      </div>
+
+      <p class="footer-note">
+        <span>截图建议：本页作为“Agent 流程图截图”。</span>
+        <span>核心逻辑：收到任务 → 判断类型与权限 → 复用能力 → 学术处理 → 评审闭环 → 归档回写。</span>
+      </p>
+    </section>
+  </main>
+
+  <script>
+    const tabs = document.querySelectorAll(".tab");
+    const screens = document.querySelectorAll(".screen");
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const target = tab.dataset.target;
+        tabs.forEach((item) => item.classList.toggle("active", item === tab));
+        screens.forEach((screen) => screen.classList.toggle("active", screen.id === target));
+      });
+    });
+  </script>
+</body>
+</html>
